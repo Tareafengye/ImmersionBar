@@ -1,7 +1,7 @@
-#Release Note
+# Release Note
 ## 0.0.1
--fork from https://github.com/gyf-dev/ImmersionBar
--添加上传自有maven逻辑
+- fork from https://github.com/gyf-dev/ImmersionBar
+- 添加上传自有maven逻辑
 
 
 
