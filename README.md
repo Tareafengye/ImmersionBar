@@ -1,10 +1,10 @@
 # Release Note
-## 0.0.1
+## V0.0.1
 - fork from https://github.com/gyf-dev/ImmersionBar
 - 添加上传自有maven逻辑
 
 
-
+# ------------------------原来的文档分割线------------------------------------
 
 # ImmersionBar -- android 4.4以上沉浸式实现 
 
