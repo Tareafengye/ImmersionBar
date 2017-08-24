@@ -1,3 +1,11 @@
+#Release Note
+## 0.0.1
+-fork from https://github.com/gyf-dev/ImmersionBar
+-添加上传自有maven逻辑
+
+
+
+
 # ImmersionBar -- android 4.4以上沉浸式实现 
 
 ## 直接看效果图，最下面有各个版本的效果图

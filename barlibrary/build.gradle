@@ -1,5 +1,12 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'maven'
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def urlPub = properties.getProperty('repository.pub')
+def urlPri = properties.getProperty('repository.pri')
+def userName = properties.getProperty('repository.userName')
+def password = properties.getProperty('repository.password')
 
 android {
     compileSdkVersion 25
@@ -26,6 +33,17 @@ android {
         // but continue the build even when errors are found:
         abortOnError false
     }
+
+    uploadArchives {
+        repositories.mavenDeployer {
+            repository(url: "${urlPub}") {
+                authentication(userName: "${userName}",password:"${password}")
+            }
+            pom.version = "0.0.1"
+            pom.artifactId = "ImmersionBar"
+            pom.groupId = "com.dz.pub"
+        }
+    }
 }
 
 dependencies {
@@ -37,21 +55,21 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-task makeJar(type: Copy) {
-    delete 'build/libs/barlibrary-2.2.7.jar'
-    from('build/intermediates/bundles/default/')
-    into('build/libs/')
-    include('classes.jar')
-    rename('classes.jar', 'barlibrary-2.2.8.jar')
-}
+//task makeJar(type: Copy) {
+//    delete 'build/libs/barlibrary-2.2.7.jar'
+//    from('build/intermediates/bundles/default/')
+//    into('build/libs/')
+//    include('classes.jar')
+//    rename('classes.jar', 'barlibrary-2.2.8.jar')
+//}
 
-makeJar.dependsOn(build)
+//makeJar.dependsOn(build)
 
-publish {
-    userOrg = 'magic-dev'
-    groupId = 'com.gyf.barlibrary'
-    artifactId = 'barlibrary'
-    publishVersion = '2.2.8'
-    desc = 'Android bar management'
-    website = 'https://github.com/gyf-dev/ImmersionBar'
-}
+//publish {
+//    userOrg = 'magic-dev'
+//    groupId = 'com.gyf.barlibrary'
+//    artifactId = 'barlibrary'
+//    publishVersion = '2.2.8'
+//    desc = 'Android bar management'
+//    website = 'https://github.com/gyf-dev/ImmersionBar'
+//}
