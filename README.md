@@ -1,4 +1,7 @@
 # Release Note
+## V1.0.1
+   对原来sdk做了一些低版本api的兼容 适配了zuk
+
 ## V0.0.1
 - fork from https://github.com/gyf-dev/ImmersionBar
 - 添加上传自有maven逻辑

@@ -1,6 +1,8 @@
 package com.gyf.barlibrary;
 
+import android.os.Build;
 import android.text.TextUtils;
+
 
 import java.lang.reflect.Method;
 
@@ -13,6 +15,7 @@ public class OSUtils {
     private static final String KEY_MIUI_VERSION_NAME = "ro.miui.ui.version.name";
     private static final String KEY_EMUI_VERSION_NAME = "ro.build.version.emui";
     private static final String KEY_DISPLAY = "ro.build.display.id";
+    private static final String KEY_FUNTOUCH_VERSION_NAME = "ro.vivo.os.name";//增加vivo手机适配
 
     /**
      * 判断是否为miui
@@ -116,6 +119,7 @@ public class OSUtils {
         return false;
     }
 
+
     /**
      * 判断flymeOS的版本是否等于5
      * Is flyme os 5 boolean.
@@ -138,6 +142,13 @@ public class OSUtils {
         return false;
     }
 
+    /**
+     * 是否ZUK手机
+     * @return
+     */
+    public static boolean isZukOS(){
+        return TextUtils.equals(Build.BRAND, "zuk");
+    }
 
     /**
      * 得到flymeOS的版本
@@ -149,8 +160,20 @@ public class OSUtils {
         return isFlymeOS() ? getSystemProperty(KEY_DISPLAY, "") : "";
     }
 
+    /**
+     * 判断是不是vivio的手机。
+     * @return
+     */
+    public static boolean isFuntouchOS() {
+        return getFuntouchOsFlag().toLowerCase().contains("funtouch");
+    }
+
     private static String getFlymeOSFlag() {
         return getSystemProperty(KEY_DISPLAY, "");
+    }
+
+    private static String getFuntouchOsFlag() {
+        return getSystemProperty(KEY_FUNTOUCH_VERSION_NAME, "");
     }
 
     private static String getSystemProperty(String key, String defaultValue) {
