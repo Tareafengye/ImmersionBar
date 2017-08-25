@@ -1307,33 +1307,37 @@ public class ImmersionBar {
      * 初始化状态栏和导航栏
      */
     private void initBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (Build.VERSION.SDK_INT < 23) {
-                statusBarColor("#20000000");//给状态栏一个半透明的颜色 实测发现vivo不能沉浸 所以在这里给他设置个半透明。
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if (Build.VERSION.SDK_INT < 23) {
+                    statusBarColor("#20000000");//给状态栏一个半透明的颜色 实测发现vivo不能沉浸 所以在这里给他设置个半透明。
+                }
+                int uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;  //防止系统栏隐藏时内容区域大小发生变化
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !OSUtils.isEMUI3_1()) {
+                    uiFlags = initBarAboveLOLLIPOP(uiFlags); //初始化5.0以上，包含5.0
+                    uiFlags = setStatusBarDarkFont(uiFlags); //android 6.0以上设置状态栏字体为暗色
+                    supportActionBar();
+                } else {
+                    initBarBelowLOLLIPOP(); //初始化5.0以下，4.4以上沉浸式
+                    solveNavigation();  //解决android4.4有导航栏的情况下，activity底部被导航栏遮挡的问题和android 5.0以下解决状态栏和布局重叠问题
+                }
+                uiFlags = hideBar(uiFlags);  //隐藏状态栏或者导航栏
+                mWindow.getDecorView().setSystemUiVisibility(uiFlags);
             }
-            int uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;  //防止系统栏隐藏时内容区域大小发生变化
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !OSUtils.isEMUI3_1()) {
-                uiFlags = initBarAboveLOLLIPOP(uiFlags); //初始化5.0以上，包含5.0
-                uiFlags = setStatusBarDarkFont(uiFlags); //android 6.0以上设置状态栏字体为暗色
-                supportActionBar();
-            } else {
-                initBarBelowLOLLIPOP(); //初始化5.0以下，4.4以上沉浸式
-                solveNavigation();  //解决android4.4有导航栏的情况下，activity底部被导航栏遮挡的问题和android 5.0以下解决状态栏和布局重叠问题
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && OSUtils.isZukOS()) {
+                setZUKStatusBarLightMode(mWindow);
+            } else if (OSUtils.isMIUI6Later()) {
+                setMIUIStatusBarDarkFont(mWindow, mBarParams.darkFont);         //修改miui状态栏字体颜色
+            } else if (OSUtils.isFlymeOS4Later()) {          // 修改Flyme OS状态栏字体颜色
+                if (mBarParams.flymeOSStatusBarFontColor != 0) {
+                    FlymeOSStatusBarFontUtils.setStatusBarDarkIcon(mActivity, mBarParams.flymeOSStatusBarFontColor);
+                } else {
+                    if (Build.VERSION.SDK_INT < 23)
+                        FlymeOSStatusBarFontUtils.setStatusBarDarkIcon(mActivity, mBarParams.darkFont);
+                }
             }
-            uiFlags = hideBar(uiFlags);  //隐藏状态栏或者导航栏
-            mWindow.getDecorView().setSystemUiVisibility(uiFlags);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && OSUtils.isZukOS()) {
-            setZUKStatusBarLightMode(mWindow);
-        } else if (OSUtils.isMIUI6Later()) {
-            setMIUIStatusBarDarkFont(mWindow, mBarParams.darkFont);         //修改miui状态栏字体颜色
-        } else if (OSUtils.isFlymeOS4Later()) {          // 修改Flyme OS状态栏字体颜色
-            if (mBarParams.flymeOSStatusBarFontColor != 0) {
-                FlymeOSStatusBarFontUtils.setStatusBarDarkIcon(mActivity, mBarParams.flymeOSStatusBarFontColor);
-            } else {
-                if (Build.VERSION.SDK_INT < 23)
-                    FlymeOSStatusBarFontUtils.setStatusBarDarkIcon(mActivity, mBarParams.darkFont);
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -1453,7 +1457,7 @@ public class ImmersionBar {
             }
         }
         // 解决android4.4有导航栏的情况下，activity底部被导航栏遮挡的问题
-        if (mConfig.hasNavigtionBar() && !mBarParams.fullScreenTemp && !mBarParams.fullScreen) {
+        if (mConfig.hasNavigtionBar() && !mBarParams.fullScreenTemp && !mBarParams.fullScreen && OSUtils.isEMUI()) {
             if (mConfig.isNavigationAtBottom()) { //判断导航栏是否在底部
                 if (!mBarParams.isSupportActionBar) { //判断是否支持actionBar
                     if (mBarParams.navigationBarEnable && mBarParams.navigationBarWithKitkatEnable) {
