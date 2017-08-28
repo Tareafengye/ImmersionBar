@@ -39,7 +39,7 @@ android {
             repository(url: "${urlPub}") {
                 authentication(userName: "${userName}",password:"${password}")
             }
-            pom.version = "0.0.2"
+            pom.version = "0.0.3"
             pom.artifactId = "ImmersionBar"
             pom.groupId = "com.dz.pub"
         }
