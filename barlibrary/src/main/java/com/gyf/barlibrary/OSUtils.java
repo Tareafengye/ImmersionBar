@@ -144,10 +144,12 @@ public class OSUtils {
 
     /**
      * 是否ZUK手机
+     *
      * @return
      */
-    public static boolean isZukOS(){
-        return TextUtils.equals(Build.BRAND, "zuk");
+    public static boolean isZukOS() {
+        if (TextUtils.isEmpty(Build.BRAND)) return false;
+        return TextUtils.equals(Build.BRAND.toLowerCase(), "zuk");
     }
 
     /**
