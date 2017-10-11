@@ -1367,6 +1367,7 @@ public class ImmersionBar {
         if (mBarParams.navigationBarEnable)
             mWindow.setNavigationBarColor(blendARGB(mBarParams.navigationBarColor,
                     mBarParams.navigationBarColorTransform, mBarParams.navigationBarAlpha));  //设置导航栏颜色
+
         return uiFlags;
     }
 
@@ -1446,74 +1447,76 @@ public class ImmersionBar {
      * 解决安卓4.4和EMUI3.1导航栏与状态栏的问题，以及系统属性fitsSystemWindows的坑
      */
     private void solveNavigation() {
-        for (int i = 0, count = mContentView.getChildCount(); i < count; i++) {
-            View childView = mContentView.getChildAt(i);
-            if (childView instanceof ViewGroup) {
-                mBarParams.systemWindows = childView.getFitsSystemWindows();
-                if (mBarParams.systemWindows) {
-                    mContentView.setPadding(0, 0, 0, 0);
-                    return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && Build.VERSION.SDK_INT < 23) {
+            for (int i = 0, count = mContentView.getChildCount(); i < count; i++) {
+                View childView = mContentView.getChildAt(i);
+                if (childView instanceof ViewGroup) {
+                    mBarParams.systemWindows = childView.getFitsSystemWindows();
+                    if (mBarParams.systemWindows) {
+                        mContentView.setPadding(0, 0, 0, 0);
+                        return;
+                    }
                 }
             }
-        }
-        // 解决android4.4有导航栏的情况下，activity底部被导航栏遮挡的问题
-        if (mConfig.hasNavigtionBar() && !mBarParams.fullScreenTemp && !mBarParams.fullScreen && OSUtils.isEMUI()) {
-            if (mConfig.isNavigationAtBottom()) { //判断导航栏是否在底部
-                if (!mBarParams.isSupportActionBar) { //判断是否支持actionBar
-                    if (mBarParams.navigationBarEnable && mBarParams.navigationBarWithKitkatEnable) {
-                        if (mBarParams.fits)
-                            mContentView.setPadding(0, mConfig.getStatusBarHeight(),
-                                    0, mConfig.getNavigationBarHeight()); //有导航栏，获得rootView的根节点，然后设置距离底部的padding值为导航栏的高度值
-                        else
-                            mContentView.setPadding(0, 0, 0, mConfig.getNavigationBarHeight());
+            // 解决android4.4有导航栏的情况下，activity底部被导航栏遮挡的问题
+            if (mConfig.hasNavigtionBar() && !mBarParams.fullScreenTemp && !mBarParams.fullScreen && !OSUtils.isEMUI()) {
+                if (mConfig.isNavigationAtBottom()) { //判断导航栏是否在底部
+                    if (!mBarParams.isSupportActionBar) { //判断是否支持actionBar
+                        if (mBarParams.navigationBarEnable && mBarParams.navigationBarWithKitkatEnable) {
+                            if (mBarParams.fits)
+                                mContentView.setPadding(0, mConfig.getStatusBarHeight(),
+                                        0, mConfig.getNavigationBarHeight()); //有导航栏，获得rootView的根节点，然后设置距离底部的padding值为导航栏的高度值
+                            else
+                                mContentView.setPadding(0, 0, 0, mConfig.getNavigationBarHeight());
+                        } else {
+                            if (mBarParams.fits)
+                                mContentView.setPadding(0, mConfig.getStatusBarHeight(), 0, 0);
+                            else
+                                mContentView.setPadding(0, 0, 0, 0);
+                        }
                     } else {
-                        if (mBarParams.fits)
-                            mContentView.setPadding(0, mConfig.getStatusBarHeight(), 0, 0);
+                        //支持有actionBar的界面
+                        if (mBarParams.navigationBarEnable && mBarParams.navigationBarWithKitkatEnable)
+                            mContentView.setPadding(0, mConfig.getStatusBarHeight() +
+                                    mConfig.getActionBarHeight() + 10, 0, mConfig.getNavigationBarHeight());
                         else
-                            mContentView.setPadding(0, 0, 0, 0);
+                            mContentView.setPadding(0, mConfig.getStatusBarHeight() +
+                                    mConfig.getActionBarHeight() + 10, 0, 0);
                     }
                 } else {
-                    //支持有actionBar的界面
-                    if (mBarParams.navigationBarEnable && mBarParams.navigationBarWithKitkatEnable)
-                        mContentView.setPadding(0, mConfig.getStatusBarHeight() +
-                                mConfig.getActionBarHeight() + 10, 0, mConfig.getNavigationBarHeight());
-                    else
-                        mContentView.setPadding(0, mConfig.getStatusBarHeight() +
-                                mConfig.getActionBarHeight() + 10, 0, 0);
+                    if (!mBarParams.isSupportActionBar) {
+                        if (mBarParams.navigationBarEnable && mBarParams.navigationBarWithKitkatEnable) {
+                            if (mBarParams.fits)
+                                mContentView.setPadding(0, mConfig.getStatusBarHeight(),
+                                        mConfig.getNavigationBarWidth(), 0); //不在底部，设置距离右边的padding值为导航栏的宽度值
+                            else
+                                mContentView.setPadding(0, 0, mConfig.getNavigationBarWidth(), 0);
+                        } else {
+                            if (mBarParams.fits)
+                                mContentView.setPadding(0, mConfig.getStatusBarHeight(), 0, 0);
+                            else
+                                mContentView.setPadding(0, 0, 0, 0);
+                        }
+                    } else {
+                        //支持有actionBar的界面
+                        if (mBarParams.navigationBarEnable && mBarParams.navigationBarWithKitkatEnable)
+                            mContentView.setPadding(0, mConfig.getStatusBarHeight() +
+                                    mConfig.getActionBarHeight() + 10, mConfig.getNavigationBarWidth(), 0);
+                        else
+                            mContentView.setPadding(0, mConfig.getStatusBarHeight() +
+                                    mConfig.getActionBarHeight() + 10, 0, 0);
+                    }
                 }
             } else {
                 if (!mBarParams.isSupportActionBar) {
-                    if (mBarParams.navigationBarEnable && mBarParams.navigationBarWithKitkatEnable) {
-                        if (mBarParams.fits)
-                            mContentView.setPadding(0, mConfig.getStatusBarHeight(),
-                                    mConfig.getNavigationBarWidth(), 0); //不在底部，设置距离右边的padding值为导航栏的宽度值
-                        else
-                            mContentView.setPadding(0, 0, mConfig.getNavigationBarWidth(), 0);
-                    } else {
-                        if (mBarParams.fits)
-                            mContentView.setPadding(0, mConfig.getStatusBarHeight(), 0, 0);
-                        else
-                            mContentView.setPadding(0, 0, 0, 0);
-                    }
+                    if (mBarParams.fits)
+                        mContentView.setPadding(0, mConfig.getStatusBarHeight(), 0, 0);
+                    else
+                        mContentView.setPadding(0, 0, 0, 0);
                 } else {
                     //支持有actionBar的界面
-                    if (mBarParams.navigationBarEnable && mBarParams.navigationBarWithKitkatEnable)
-                        mContentView.setPadding(0, mConfig.getStatusBarHeight() +
-                                mConfig.getActionBarHeight() + 10, mConfig.getNavigationBarWidth(), 0);
-                    else
-                        mContentView.setPadding(0, mConfig.getStatusBarHeight() +
-                                mConfig.getActionBarHeight() + 10, 0, 0);
+                    mContentView.setPadding(0, mConfig.getStatusBarHeight() + mConfig.getActionBarHeight() + 10, 0, 0);
                 }
-            }
-        } else {
-            if (!mBarParams.isSupportActionBar) {
-                if (mBarParams.fits)
-                    mContentView.setPadding(0, mConfig.getStatusBarHeight(), 0, 0);
-                else
-                    mContentView.setPadding(0, 0, 0, 0);
-            } else {
-                //支持有actionBar的界面
-                mContentView.setPadding(0, mConfig.getStatusBarHeight() + mConfig.getActionBarHeight() + 10, 0, 0);
             }
         }
     }

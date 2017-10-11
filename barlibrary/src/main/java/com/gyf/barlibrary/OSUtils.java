@@ -36,10 +36,13 @@ public class OSUtils {
      */
     public static boolean isMIUI6Later() {
         String version = getMIUIVersion();
-        if ((!version.isEmpty() && Integer.valueOf(version.substring(1)) >= 6)) {
-            return true;
-        } else
-            return false;
+        try {
+            if ((!version.isEmpty() && Integer.valueOf(version.substring(1)) >= 6)) {
+                return true;
+            }
+        } catch (Exception ignore) {
+        }
+        return false;
     }
 
     /**
@@ -104,17 +107,20 @@ public class OSUtils {
      * @return the boolean
      */
     public static boolean isFlymeOS4Later() {
-        String version = getFlymeOSVersion();
-        int num;
-        if (!version.isEmpty()) {
-            if (version.toLowerCase().contains("os")) {
-                num = Integer.valueOf(version.substring(9, 10));
-            } else {
-                num = Integer.valueOf(version.substring(6, 7));
+        try {
+            String version = getFlymeOSVersion();
+            int num;
+            if (!version.isEmpty()) {
+                if (version.toLowerCase().contains("os")) {
+                    num = Integer.valueOf(version.substring(9, 10));
+                } else {
+                    num = Integer.valueOf(version.substring(6, 7));
+                }
+                if (num >= 4) {
+                    return true;
+                }
             }
-            if (num >= 4) {
-                return true;
-            }
+        } catch (Exception ignore) {
         }
         return false;
     }
@@ -127,17 +133,20 @@ public class OSUtils {
      * @return the boolean
      */
     public static boolean isFlymeOS5() {
-        String version = getFlymeOSVersion();
-        int num;
-        if (!version.isEmpty()) {
-            if (version.toLowerCase().contains("os")) {
-                num = Integer.valueOf(version.substring(9, 10));
-            } else {
-                num = Integer.valueOf(version.substring(6, 7));
+        try {
+            String version = getFlymeOSVersion();
+            int num;
+            if (!version.isEmpty()) {
+                if (version.toLowerCase().contains("os")) {
+                    num = Integer.valueOf(version.substring(9, 10));
+                } else {
+                    num = Integer.valueOf(version.substring(6, 7));
+                }
+                if (num == 5) {
+                    return true;
+                }
             }
-            if (num == 5) {
-                return true;
-            }
+        } catch (Exception ignore) {
         }
         return false;
     }
@@ -183,8 +192,8 @@ public class OSUtils {
             Class<?> clz = Class.forName("android.os.SystemProperties");
             Method get = clz.getMethod("get", String.class, String.class);
             return (String) get.invoke(clz, key, defaultValue);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignore) {
+
         }
         return defaultValue;
     }
