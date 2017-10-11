@@ -101,21 +101,24 @@ public class ImmersionBar {
      * Init params.
      */
     private void initParams() {
-        mDecorView = (ViewGroup) mWindow.getDecorView();
-        mContentView = (ViewGroup) mDecorView.findViewById(android.R.id.content);
-        mConfig = new BarConfig(mActivity);
-        if (mMap.get(mImmersionBarName) == null) {
-            mBarParams = new BarParams();
-            if (!isEmpty(mFragmentName) && (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
-                    || OSUtils.isEMUI3_1())) { //保证一个activity页面有同一个状态栏view和导航栏view
-                if (mMap.get(mActivityName) == null)
-                    throw new IllegalArgumentException("在Fragment里使用时，请先在加载Fragment的Activity里初始化！！！");
-                mBarParams.statusBarView = mMap.get(mActivityName).statusBarView;
-                mBarParams.navigationBarView = mMap.get(mActivityName).navigationBarView;
+        try {
+            mDecorView = (ViewGroup) mWindow.getDecorView();
+            mContentView = (ViewGroup) mDecorView.findViewById(android.R.id.content);
+            mConfig = new BarConfig(mActivity);
+            if (mMap.get(mImmersionBarName) == null) {
+                mBarParams = new BarParams();
+                if (!isEmpty(mFragmentName) && (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
+                        || OSUtils.isEMUI3_1())) { //保证一个activity页面有同一个状态栏view和导航栏view
+                    if (mMap.get(mActivityName) == null)
+                        throw new IllegalArgumentException("在Fragment里使用时，请先在加载Fragment的Activity里初始化！！！");
+                    mBarParams.statusBarView = mMap.get(mActivityName).statusBarView;
+                    mBarParams.navigationBarView = mMap.get(mActivityName).navigationBarView;
+                }
+                mMap.put(mImmersionBarName, mBarParams);
+            } else {
+                mBarParams = mMap.get(mImmersionBarName);
             }
-            mMap.put(mImmersionBarName, mBarParams);
-        } else {
-            mBarParams = mMap.get(mImmersionBarName);
+        } catch (Exception ignore) {
         }
     }
 
@@ -858,13 +861,16 @@ public class ImmersionBar {
      * @return the immersion bar
      */
     public ImmersionBar statusBarDarkFont(boolean isDarkFont, @FloatRange(from = 0f, to = 1f) float statusAlpha) {
-        mBarParams.darkFont = isDarkFont;
-        if (!isDarkFont)
-            mBarParams.flymeOSStatusBarFontColor = 0;
-        if (isSupportStatusBarDarkFont()) {
-            mBarParams.statusBarAlpha = 0;
-        } else {
-            mBarParams.statusBarAlpha = statusAlpha;
+        try {
+            mBarParams.darkFont = isDarkFont;
+            if (!isDarkFont)
+                mBarParams.flymeOSStatusBarFontColor = 0;
+            if (isSupportStatusBarDarkFont()) {
+                mBarParams.statusBarAlpha = 0;
+            } else {
+                mBarParams.statusBarAlpha = statusAlpha;
+            }
+        } catch (Exception ignore) {
         }
         return this;
     }
