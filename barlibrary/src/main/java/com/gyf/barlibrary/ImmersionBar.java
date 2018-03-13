@@ -51,6 +51,8 @@ public class ImmersionBar {
     private String mImmersionBarName;
     private KeyboardPatch mKeyboardPatch;
 
+    private String statusBarColor = "#20000000";
+
     /**
      * 在Activit里初始化
      * Instantiates a new Immersion bar.
@@ -249,6 +251,18 @@ public class ImmersionBar {
      */
     public ImmersionBar statusBarColor(String statusBarColor) {
         return this.statusBarColorInt(Color.parseColor(statusBarColor));
+    }
+
+    /**
+     * 状态栏颜色
+     * Status bar color int immersion bar.
+     *
+     * @param statusBarColor the status bar color
+     * @return the immersion bar
+     */
+    public ImmersionBar statusBarDefaultColor(String statusBarColor) {
+         this.statusBarColor = statusBarColor;
+         return this;
     }
 
     /**
@@ -1316,7 +1330,7 @@ public class ImmersionBar {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 if (Build.VERSION.SDK_INT < 23) {
-                    statusBarColor("#20000000");//给状态栏一个半透明的颜色 实测发现vivo不能沉浸 所以在这里给他设置个半透明。
+                    statusBarColor(statusBarColor);//给状态栏一个半透明的颜色 实测发现vivo不能沉浸 所以在这里给他设置个半透明。
                 }
                 int uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;  //防止系统栏隐藏时内容区域大小发生变化
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !OSUtils.isEMUI3_1()) {

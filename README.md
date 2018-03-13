@@ -1,5 +1,8 @@
 # Release Note
 ## V0.0.3
+- 可以设置兜底的StatusBarColor了
+
+## V0.0.3
    对原来sdk做了一些低版本api的兼容 适配了zuk 
 
 ## V0.0.1
