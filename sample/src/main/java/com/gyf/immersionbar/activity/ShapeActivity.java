@@ -16,8 +16,8 @@ public class ShapeActivity extends BaseActivity {
     @Override
     protected void initImmersionBar() {
         super.initImmersionBar();
-        mImmersionBar.titleBar(R.id.toolbar)
-                .navigationBarColor(R.color.shape1)
-                .init();
+//        mImmersionBar.titleBar(R.id.toolbar)
+//                .navigationBarColor(R.color.shape1)
+//                .init();
     }
 }

@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  * android 4.4以上沉浸式以及bar的管理
  * Created by wangwz on 2017/08/15.
- *
+ * <p>
  * 改造自github  https://github.com/gyf-dev/ImmersionBar
  * 原版本 基于api23以上写的 在这里对一些api做了低版本处理。
  */
@@ -51,7 +51,7 @@ public class ImmersionBar {
     private String mImmersionBarName;
     private KeyboardPatch mKeyboardPatch;
 
-    private String statusBarColor = "#20000000";
+    private int statusBarColor = Color.parseColor("#20000000");
 
     /**
      * 在Activit里初始化
@@ -257,12 +257,12 @@ public class ImmersionBar {
      * 状态栏颜色
      * Status bar color int immersion bar.
      *
-     * @param statusBarColor the status bar color
+     * @param defaultColor the status bar color
      * @return the immersion bar
      */
-    public ImmersionBar statusBarDefaultColor(String statusBarColor) {
-         this.statusBarColor = statusBarColor;
-         return this;
+    public ImmersionBar statusBarDefaultColor(@ColorRes int defaultColor) {
+        this.statusBarColor = defaultColor;
+        return this;
     }
 
     /**
@@ -1920,7 +1920,7 @@ public class ImmersionBar {
         return Color.argb((int) a, (int) r, (int) g, (int) b);
     }
 
-    public static void setZUKStatusBarLightMode(Window window){
+    public static void setZUKStatusBarLightMode(Window window) {
         try {
             Method setM = Window.class.getDeclaredMethod("setDarkStatusIcon", boolean.class);
             setM.invoke(window, true);
